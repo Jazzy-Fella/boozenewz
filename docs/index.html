@@ -44,12 +44,12 @@
         </tr>
       </thead>
       <tbody id="deal-rows">
-        <!-- JavaScript will inject deal rows here -->
+        <!-- Deals injected by JavaScript -->
       </tbody>
     </table>
   </div>
 
-  <!-- ⏱ Live datetime script -->
+  <!-- ⏱ Clock script -->
   <script>
     function updateTime() {
       const now = new Date();
@@ -63,16 +63,23 @@
     updateTime();
   </script>
 
-  <!-- 🧠 Data loading + Filtering script -->
+  <!-- 🧠 Deal loading + filtering -->
   <script>
-    // Load deals.json and render rows
+    const btns = {
+      all:       document.getElementById('filter-all'),
+      tesco:     document.getElementById('filter-tesco'),
+      morrisons: document.getElementById('filter-morrisons'),
+      asda:      document.getElementById('filter-asda'),
+    };
+
+    // Load deals and inject into table
     fetch('deals.json')
       .then(response => response.json())
       .then(data => {
         const tbody = document.getElementById('deal-rows');
         data.forEach(deal => {
           const row = document.createElement('tr');
-          row.dataset.store = deal.store.toLowerCase();
+          row.dataset.store = deal.store.toLowerCase();  // e.g., 'morrisons'
           row.innerHTML = `
             <td class="store">${deal.store}</td>
             <td>${deal.title}</td>
@@ -84,14 +91,6 @@
           tbody.appendChild(row);
         });
       });
-
-    // Filtering logic
-    const btns = {
-      all:       document.getElementById('filter-all'),
-      tesco:     document.getElementById('filter-tesco'),
-      morrisons: document.getElementById('filter-morrisons'),
-      asda:      document.getElementById('filter-asda'),
-    };
 
     function applyFilter(store = '') {
       const rows = document.querySelectorAll('#deals-table tbody tr');
