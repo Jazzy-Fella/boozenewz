@@ -1,80 +1,95 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-body {
-  font-family: 'VT323', monospace;
-  background-color: black;
-  color: white;
+html, body {
   margin: 0;
   padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+  background-color: black;
+  color: white;
+  max-width: 100%;
   overflow-x: hidden;
 }
 
-.ceefax-header {
-  background-color: blue;
+.header {
+  background-color: #0000aa;
   color: yellow;
-  padding: 5px 10px;
-  font-size: 1.5em;
-  border-bottom: 4px solid red;
-  text-align: center;
+  padding: 10px;
+  font-size: 1.2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid red;
 }
 
 h1 {
-  text-align: center;
-  color: yellow;
   font-size: 3em;
-  margin: 0.3em 0;
+  color: yellow;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-img {
-  display: block;
-  margin: 0 auto;
-  max-width: 100px;
+h1 img {
+  height: 50px;
+  margin-right: 10px;
 }
 
-button {
-  font-family: 'VT323', monospace;
-  font-size: 1.5em;
-  background-color: black;
+nav {
+  text-align: center;
+  margin: 20px 0;
+}
+
+nav button {
+  background: black;
   color: cyan;
   border: 2px solid red;
-  padding: 5px 15px;
-  margin: 10px 5px;
+  font-family: 'Share Tech Mono', monospace;
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 1.2em;
   cursor: pointer;
 }
 
-button.active {
-  background-color: red;
+nav button.active {
+  background: red;
   color: white;
 }
 
 .table-container {
   width: 100vw;
   overflow-x: auto;
-  padding: 0 5px;
+  padding: 0;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
 }
 
 table {
-  width: 100%;
   border-collapse: collapse;
-  table-layout: auto;
+  width: 100%;
+  max-width: 960px;
 }
 
 th, td {
   border: 2px solid red;
-  padding: 8px;
+  padding: 10px;
   text-align: left;
   font-size: 1.1em;
-  word-break: break-word;
 }
 
 th {
-  background-color: darkred;
+  background-color: #800000;
   color: white;
-  font-size: 1.5em;
 }
 
-a {
+td {
+  background-color: black;
+}
+
+.product-title a {
   color: #00ccff;
   text-decoration: underline;
 }
@@ -83,10 +98,23 @@ a {
   color: #00ccff;
 }
 
-.promotion {
-  color: white;
-}
-
 .saving {
   color: yellow;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  th, td {
+    font-size: 1em;
+    padding: 8px;
+  }
+
+  nav button {
+    font-size: 1em;
+    padding: 8px 14px;
+  }
+
+  h1 {
+    font-size: 2.2em;
+  }
 }
