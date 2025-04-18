@@ -63,9 +63,9 @@
     updateTime();
   </script>
 
-  <!-- 🧠 Filtering + Data loading script -->
+  <!-- 🧠 Data loading + Filtering script -->
   <script>
-    // Load the data from deals.json and inject rows
+    // Load deals.json and render rows
     fetch('deals.json')
       .then(response => response.json())
       .then(data => {
@@ -87,15 +87,19 @@
 
     // Filtering logic
     const btns = {
-      all:   document.getElementById('filter-all'),
-      tesco: document.getElementById('filter-tesco'),
-      morr:  document.getElementById('filter-morrisons'),
-      asda:  document.getElementById('filter-asda'),
+      all:       document.getElementById('filter-all'),
+      tesco:     document.getElementById('filter-tesco'),
+      morrisons: document.getElementById('filter-morrisons'),
+      asda:      document.getElementById('filter-asda'),
     };
-    function applyFilter(store='') {
+
+    function applyFilter(store = '') {
       const rows = document.querySelectorAll('#deals-table tbody tr');
-      rows.forEach(r => r.style.display = (!store || r.dataset.store === store) ? '' : 'none');
+      rows.forEach(r => {
+        r.style.display = (!store || r.dataset.store === store) ? '' : 'none';
+      });
     }
+
     Object.entries(btns).forEach(([key, btn]) => {
       btn.addEventListener('click', () => {
         Object.values(btns).forEach(b => b.classList.remove('active'));
