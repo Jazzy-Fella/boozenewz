@@ -1,7 +1,7 @@
 /* 1. Retro VT323 font */
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-/* 2. Global reset + viewport */
+/* 2. Global reset & viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -22,6 +22,13 @@ html, body {
   font-size: 1.4em;
   border-bottom: 3px solid red;
 }
+.teletext-header .page,
+.teletext-header .ceefax-block {
+  font-weight: bold;
+}
+.teletext-header .datetime {
+  font-style: italic;
+}
 
 /* 4. Title + Beer Guy */
 .title-section {
@@ -35,7 +42,7 @@ html, body {
   gap: 8px;
 }
 .title-inner.logo h1 {
-  color: yellow;   /* yellow “BOOZE NEWZ” */
+  color: yellow;   /* yellow “BOOZE NEWZ” */
   font-size: 2.8em;
   margin: 0;
 }
@@ -85,42 +92,54 @@ table {
 /* 8. Headers & cells */
 th, td {
   border: 2px solid red;
-  padding: 8px;
-  text-align: left;
   font-size: 1.1em;
 }
-
-/* 9. Prevent header wrap */
 th {
+  padding: 8px;
   background-color: darkred;
   color: white;
-  white-space: nowrap;    /* KEEP “Price” & “Saving” on one line */
+  white-space: nowrap;   /* keep “Price” & “Saving” headers on one line */
 }
-
-/* 10. Allow data to wrap as needed */
 td {
+  padding: 8px;
+  text-align: left;
   white-space: normal;
   word-break: break-word;
   background-color: black;
 }
 
-/* 11. Colour overrides */
+/* 9. Column–specific colours & spacing */
+
+/* Product link (clickable name) */
 .product-link a {
-  color: #00ccff;         /* blue product links */
+  color: #00ccff;
   text-decoration: underline;
 }
+
+/* Price column: blue, no wrap, tighter padding */
 td.price {
-  color: #00ccff;         /* blue prices */
+  color: #00ccff;
+  white-space: nowrap;
+  padding: 4px 6px;
 }
+
+/* Promotion column */
 td.promotion {
-  color: white;           /* white promo text */
+  color: white;
 }
+
+/* Savings column */
 td.saving {
-  color: yellow;          /* yellow savings */
+  color: yellow;
   font-weight: bold;
 }
 
-/* 12. Mobile refinements */
+/* 10. Ensure the Price header also won’t wrap */
+#deals-table th:nth-child(2) {
+  white-space: nowrap;
+}
+
+/* 11. Mobile refinements */
 @media (max-width: 600px) {
   .teletext-header {
     font-size: 1.2em;
@@ -135,6 +154,6 @@ td.saving {
   }
   th, td {
     font-size: 1em;
-    padding: 6px;
+    /* on mobile, keep the tight padding in Price col */
   }
 }
