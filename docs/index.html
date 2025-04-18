@@ -9,14 +9,12 @@
 </head>
 <body>
 
-  <!-- 🔷 CEEFAX‐style header bar with live time -->
   <div class="teletext-header">
     <span class="page">P100</span>
     <span class="ceefax-block">CEEFAX 1 100</span>
     <span class="datetime" id="datetime">--:--:--</span>
   </div>
 
-  <!-- 🍺 Title + Beer‐man + Filters -->
   <div class="title-section">
     <div class="title-inner">
       <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
@@ -30,26 +28,63 @@
     </div>
   </div>
 
-  <!-- 📋 Deals table -->
   <div class="table-container">
     <table id="deals-table">
       <thead>
         <tr>
-          <th>Store</th>
-          <th>Product</th>
+          <th>Product Link</th>
           <th>Price</th>
           <th>Promotion Price</th>
           <th>Saving</th>
-          <th>Link</th>
         </tr>
       </thead>
-      <tbody id="deal-rows">
-        <!-- Deals injected by JavaScript -->
+      <tbody id="deals-body">
+        <script>
+          fetch('deals.json')
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.getElementById('deals-body');
+              data.forEach(deal => {
+                const tr = document.createElement('tr');
+
+                // Product
+                const productTd = document.createElement('td');
+                const productLink = document.createElement('a');
+                productLink.href = deal.link;
+                productLink.textContent = deal.title;
+                productLink.target = '_blank';
+                productLink.style.color = 'white';
+                productLink.style.textDecoration = 'underline';
+                productTd.appendChild(productLink);
+                tr.appendChild(productTd);
+
+                // Price
+                const priceTd = document.createElement('td');
+                priceTd.textContent = deal.price;
+                tr.appendChild(priceTd);
+
+                // Promotion
+                const promoTd = document.createElement('td');
+                promoTd.textContent = deal.promotion || '';
+                promoTd.style.color = 'white';
+                tr.appendChild(promoTd);
+
+                // Saving
+                const savingTd = document.createElement('td');
+                savingTd.textContent = deal.saving !== null ? `£${deal.saving.toFixed(2)}` : '';
+                savingTd.style.color = 'yellow';
+                tr.appendChild(savingTd);
+
+                // For filtering
+                tr.dataset.store = deal.store.toLowerCase();
+                tbody.appendChild(tr);
+              });
+            });
+        </script>
       </tbody>
     </table>
   </div>
 
-  <!-- ⏱ Clock script -->
   <script>
     function updateTime() {
       const now = new Date();
@@ -61,36 +96,13 @@
     }
     setInterval(updateTime, 1000);
     updateTime();
-  </script>
 
-  <!-- 🧠 Deal loading + filtering -->
-  <script>
     const btns = {
       all:       document.getElementById('filter-all'),
       tesco:     document.getElementById('filter-tesco'),
       morrisons: document.getElementById('filter-morrisons'),
       asda:      document.getElementById('filter-asda'),
     };
-
-    // Load deals and inject into table
-    fetch('deals.json')
-      .then(response => response.json())
-      .then(data => {
-        const tbody = document.getElementById('deal-rows');
-        data.forEach(deal => {
-          const row = document.createElement('tr');
-          row.dataset.store = deal.store.toLowerCase();  // e.g., 'morrisons'
-          row.innerHTML = `
-            <td class="store">${deal.store}</td>
-            <td>${deal.title}</td>
-            <td>${deal.price}</td>
-            <td class="promotion">${deal.promotion || '—'}</td>
-            <td class="saving">${deal.saving !== null ? '£' + deal.saving.toFixed(2) : '—'}</td>
-            <td><a href="${deal.link}" target="_blank">View</a></td>
-          `;
-          tbody.appendChild(row);
-        });
-      });
 
     function applyFilter(store = '') {
       const rows = document.querySelectorAll('#deals-table tbody tr');
