@@ -1,20 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'VT323', monospace;
   background-color: black;
   color: white;
   max-width: 100%;
   overflow-x: hidden;
 }
 
-.header {
-  background-color: #0000aa;
+.teletext-header {
+  background-color: blue;
   color: yellow;
   padding: 10px;
-  font-size: 1.2em;
+  font-size: 1.5em;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -37,23 +37,23 @@ h1 img {
   margin-right: 10px;
 }
 
-nav {
+.filter-buttons {
   text-align: center;
   margin: 20px 0;
 }
 
-nav button {
+.filter-buttons button {
   background: black;
   color: cyan;
   border: 2px solid red;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'VT323', monospace;
   padding: 10px 20px;
   margin: 5px;
   font-size: 1.2em;
   cursor: pointer;
 }
 
-nav button.active {
+.filter-buttons button.active {
   background: red;
   color: white;
 }
@@ -71,6 +71,7 @@ table {
   border-collapse: collapse;
   width: 100%;
   max-width: 960px;
+  table-layout: auto;
 }
 
 th, td {
@@ -78,6 +79,8 @@ th, td {
   padding: 10px;
   text-align: left;
   font-size: 1.1em;
+  white-space: normal;
+  word-break: break-word;
 }
 
 th {
@@ -89,7 +92,7 @@ td {
   background-color: black;
 }
 
-.product-title a {
+.product-link a {
   color: #00ccff;
   text-decoration: underline;
 }
@@ -109,7 +112,7 @@ td {
     padding: 8px;
   }
 
-  nav button {
+  .filter-buttons button {
     font-size: 1em;
     padding: 8px 14px;
   }
