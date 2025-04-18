@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Booze Newz</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- 🔷 CEEFAX-style header bar with live time -->
+  <div class="teletext-header">
+    <span class="page">P100</span>
+    <span class="ceefax-block">CEEFAX 1 100</span>
+    <span class="datetime" id="datetime">Loading...</span>
+  </div>
+
+<!-- 🍺 Beer Man Left-Aligned with Title + Filters -->
+<div class="title-row">
+  <img src="{{ url_for('static', filename='img/beer-man.png') }}" alt="Beer Guy" class="beer-icon-left" />
+
+  <div class="title-stack">
+    <h1>BOOZE NEWZ</h1>
+    <div class="filter-buttons">
+      <button class="active" id="filter-all">All</button>
+      <button id="filter-tesco">Tesco</button>
+      <button id="filter-morrisons">Morrisons</button>
+      <button id="filter-asda">Asda</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- 📋 Deals table -->
+  <div class="table-container">
+    <table id="deals-table">
+      <thead>
+        <tr>
+          <th>Store</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Promotion Price</th>
+          <th>Saving</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for deal in deals %}
+        <tr data-store="{{ deal.store|lower }}">
+          <td class="store">{{ deal.store }}</td>
+          <td>{{ deal.title }}</td>
+          <td>{{ deal.price }}</td>
+          <td class="promotion">{{ deal.promotion if deal.promotion else '—' }}</td>
+          <td class="saving">
+            {% if deal.saving is not none %}
+              £{{ "%.2f"|format(deal.saving) }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td><a href="{{ deal.link }}" target="_blank">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ⏱ Live datetime script -->
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const day = dayNames[now.getDay()];
+      const date = now.getDate().toString().padStart(2, '0');
+      const month = monthNames[now.getMonth()];
+      const hrs = now.getHours().toString().padStart(2, '0');
+      const mins = now.getMinutes().toString().padStart(2, '0');
+      const secs = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById("datetime").textContent = `${day} ${date} ${month} ${hrs}:${mins}:${secs}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+
+  <!-- 🧠 Filtering script -->
+  <script>
+    const filterAll = document.getElementById('filter-all');
+    const filterTesco = document.getElementById('filter-tesco');
+    const filterMorrisons = document.getElementById('filter-morrisons');
+    const filterAsda = document.getElementById('filter-asda');
+    const buttons = [filterAll, filterTesco, filterMorrisons, filterAsda];
+    const rows = document.querySelectorAll('#deals-table tbody tr');
+
+    function applyFilter(storeFilter = '') {
+      rows.forEach(row => {
+        const rowStore = row.getAttribute('data-store');
+        row.style.display = (storeFilter === '' || rowStore === storeFilter) ? '' : 'none';
+      });
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        let storeFilter = '';
+        if (button === filterTesco) storeFilter = 'tesco';
+        else if (button === filterMorrisons) storeFilter = 'morrisons';
+        else if (button === filterAsda) storeFilter = 'asda';
+
+        applyFilter(storeFilter);
+      });
+    });
+  </script>
+
+</body>
+</html>

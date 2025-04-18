@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Booze Newz</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- 🔷 CEEFAX‐style header bar with live time -->
+  <div class="teletext-header">
+    <span class="page">P100</span>
+    <span class="ceefax-block">CEEFAX 1 100</span>
+    <span class="datetime" id="datetime">--:--:--</span>
+  </div>
+
+  <!-- 🍺 Title + Beer‐man + Filters -->
+  <div class="title-section">
+    <div class="title-inner">
+      <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
+      <h1>BOOZE NEWZ</h1>
+    </div>
+    <div class="filter-buttons">
+      <button class="active" id="filter-all">All</button>
+      <button id="filter-tesco">Tesco</button>
+      <button id="filter-morrisons">Morrisons</button>
+      <button id="filter-asda">Asda</button>
+    </div>
+  </div>
+
+  <!-- 📋 Deals table -->
+  <div class="table-container">
+    <table id="deals-table">
+      <thead>
+        <tr>
+          <th>Store</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Promotion Price</th>
+          <th>Saving</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody id="deal-rows">
+        <!-- JavaScript will inject deal rows here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ⏱ Live datetime script -->
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const d = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][now.getDay()];
+      const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()];
+      const two = n => String(n).padStart(2,'0');
+      const ts = `${d} ${two(now.getDate())} ${m} ${two(now.getHours())}:${two(now.getMinutes())}:${two(now.getSeconds())}`;
+      document.getElementById('datetime').textContent = ts;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+
+  <!-- 🧠 Filtering + Data loading script -->
+  <script>
+    // Load the data from deals.json and inject rows
+    fetch('deals.json')
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.getElementById('deal-rows');
+        data.forEach(deal => {
+          const row = document.createElement('tr');
+          row.dataset.store = deal.store.toLowerCase();
+          row.innerHTML = `
+            <td class="store">${deal.store}</td>
+            <td>${deal.title}</td>
+            <td>${deal.price}</td>
+            <td class="promotion">${deal.promotion || '—'}</td>
+            <td class="saving">${deal.saving !== null ? '£' + deal.saving.toFixed(2) : '—'}</td>
+            <td><a href="${deal.link}" target="_blank">View</a></td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+
+    // Filtering logic
+    const btns = {
+      all:   document.getElementById('filter-all'),
+      tesco: document.getElementById('filter-tesco'),
+      morr:  document.getElementById('filter-morrisons'),
+      asda:  document.getElementById('filter-asda'),
+    };
+    function applyFilter(store='') {
+      const rows = document.querySelectorAll('#deals-table tbody tr');
+      rows.forEach(r => r.style.display = (!store || r.dataset.store === store) ? '' : 'none');
+    }
+    Object.entries(btns).forEach(([key, btn]) => {
+      btn.addEventListener('click', () => {
+        Object.values(btns).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(key === 'all' ? '' : key);
+      });
+    });
+  </script>
+
+</body>
+</html>

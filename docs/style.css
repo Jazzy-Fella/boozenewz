@@ -1,0 +1,96 @@
+/*── GLOBAL ──*/
+body {
+  font-family: 'VT323', monospace;
+  background: #000;
+  color: #0ff;
+  margin: 0;
+  padding: 0;
+}
+
+/*── CEEFAX HEADER ──*/
+.teletext-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  border-bottom: 2px solid #f00;
+  font-size: 1rem;
+}
+.teletext-header .page {
+  color: #ff0;
+}
+.teletext-header .ceefax-block {
+  flex: 1;
+  text-align: center;
+  color: #0ff;
+}
+.teletext-header .datetime {
+  color: #fff;
+}
+
+/*── TITLE + FILTERS ──*/
+.title-section {
+  text-align: center;
+  padding: 15px 0 5px;
+}
+.title-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.beer-icon {
+  width: 48px;
+  height: auto;
+  margin-right: 8px;
+}
+h1 {
+  font-size: 2.5rem;
+  color: #ff0;
+  margin: 0;
+}
+
+.filter-buttons {
+  margin-top: 8px;
+}
+.filter-buttons button {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  background: #000;
+  color: #0ff;
+  border: 2px solid #f00;
+  padding: 6px 14px;
+  margin: 0 4px;
+  cursor: pointer;
+}
+.filter-buttons button.active {
+  background: #f00;
+  color: #000;
+}
+
+/*── TABLE ──*/
+.table-container {
+  overflow-x: auto;
+  padding: 0 10px 20px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+th, td {
+  padding: 8px;
+  border: 2px solid #f00;
+  text-align: center;
+}
+th {
+  background: #000;
+  color: #fff;
+}
+.store { color: #ff0; }
+.promotion { color: #fff; }
+.saving { color: #ff0; }
+a { color: #0ff; text-decoration: underline; }
+
+/* Remove any animation/jitter */

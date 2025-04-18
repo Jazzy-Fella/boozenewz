@@ -1,0 +1,128 @@
+body {
+  font-family: 'VT323', monospace;
+  background-color: black;
+  color: cyan;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🧾 CEEFAX-style header */
+.teletext-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000;
+  color: white;
+  font-family: 'VT323', monospace;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border-bottom: 2px solid red;
+}
+
+.teletext-header .page {
+  color: yellow;
+}
+
+.teletext-header .ceefax-block {
+  flex: 1;
+  text-align: center;
+  color: cyan;
+}
+
+.teletext-header .datetime {
+  color: white;
+  text-align: right;
+  min-width: 160px;
+}
+
+/* ⬅️ Beer Man + Title in a row */
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px 0 10px;
+}
+
+/* 📛 Title and buttons stack vertically */
+.title-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 🍻 Beer image */
+.beer-icon-left {
+  width: 120px;
+  height: auto;
+}
+
+/* 🔠 Title */
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  color: yellow;
+  margin: 10px 0;
+}
+
+/* 🎛️ Filter buttons */
+.filter-buttons {
+  text-align: center;
+  margin-top: 10px;
+}
+.filter-buttons button {
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  padding: 10px 18px;
+  background-color: black;
+  color: cyan;
+  border: 2px solid red;
+  margin: 0 5px;
+  cursor: pointer;
+}
+.filter-buttons button.active {
+  background-color: red;
+  color: black;
+}
+
+/* 📊 Table styling */
+.table-container {
+  overflow-x: auto;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.2rem;
+  background-color: black;
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 2px solid red;
+  text-align: center;
+}
+
+th {
+  color: white;
+  background-color: black;
+}
+
+.store {
+  color: yellow;
+}
+
+.promotion {
+  color: white;
+}
+
+.saving {
+  color: yellow;
+}
+
+a {
+  color: cyan;
+  text-decoration: underline;
+}
