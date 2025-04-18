@@ -16,7 +16,7 @@
   </div>
 
   <div class="title-section">
-    <div class="title-inner">
+    <div class="title-inner logo">
       <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
       <h1>BOOZE NEWZ</h1>
     </div>
@@ -47,35 +47,30 @@
               data.forEach(deal => {
                 const tr = document.createElement('tr');
 
-                // Product
                 const productTd = document.createElement('td');
+                productTd.classList.add('product-link');
                 const productLink = document.createElement('a');
                 productLink.href = deal.link;
                 productLink.textContent = deal.title;
                 productLink.target = '_blank';
-                productLink.style.color = 'white';
-                productLink.style.textDecoration = 'underline';
                 productTd.appendChild(productLink);
                 tr.appendChild(productTd);
 
-                // Price
                 const priceTd = document.createElement('td');
+                priceTd.classList.add('price');
                 priceTd.textContent = deal.price;
                 tr.appendChild(priceTd);
 
-                // Promotion
                 const promoTd = document.createElement('td');
                 promoTd.textContent = deal.promotion || '';
                 promoTd.style.color = 'white';
                 tr.appendChild(promoTd);
 
-                // Saving
                 const savingTd = document.createElement('td');
                 savingTd.textContent = deal.saving !== null ? `£${deal.saving.toFixed(2)}` : '';
                 savingTd.style.color = 'yellow';
                 tr.appendChild(savingTd);
 
-                // For filtering
                 tr.dataset.store = deal.store.toLowerCase();
                 tbody.appendChild(tr);
               });

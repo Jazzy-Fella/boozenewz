@@ -32,6 +32,10 @@ body {
   gap: 10px;
 }
 
+.logo h1 {
+  color: yellow;
+}
+
 .beer-icon {
   width: 48px;
   height: auto;
@@ -40,7 +44,6 @@ body {
 
 h1 {
   font-size: 3em;
-  color: white;
   margin: 0;
 }
 
@@ -66,7 +69,7 @@ h1 {
 
 .table-container {
   margin: 0 auto;
-  max-width: 95%;
+  max-width: 100%;
   overflow-x: auto;
 }
 
@@ -74,16 +77,27 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  table-layout: auto;
 }
 
 th, td {
   border: 2px solid red;
   padding: 10px;
   text-align: left;
+  white-space: normal;
 }
 
 th {
   background: darkred;
   color: white;
   font-size: 1.2em;
+}
+
+.product-link a {
+  color: #00bfff;
+  text-decoration: underline;
+}
+
+td.price {
+  color: #00bfff;
 }
