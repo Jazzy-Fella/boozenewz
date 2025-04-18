@@ -1,17 +1,20 @@
-/* 1. Retro VT323 font */
+/* 0. Force VT323 on every element */
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-/* 2. Global reset & viewport */
-html, body {
+* {
+  font-family: 'VT323', monospace !important;
   margin: 0;
   padding: 0;
-  font-family: 'VT323', monospace;
+}
+
+/* 1. Global reset & viewport */
+html, body {
   background-color: black;
   color: white;
   overflow-x: hidden;
 }
 
-/* 3. Teletext header */
+/* 2. Teletext header */
 .teletext-header {
   background-color: blue;
   color: yellow;
@@ -22,15 +25,8 @@ html, body {
   font-size: 1.4em;
   border-bottom: 3px solid red;
 }
-.teletext-header .page,
-.teletext-header .ceefax-block {
-  font-weight: bold;
-}
-.teletext-header .datetime {
-  font-style: italic;
-}
 
-/* 4. Title + Beer Guy */
+/* 3. Title + Beer Guy */
 .title-section {
   text-align: center;
   margin: 16px 0;
@@ -42,16 +38,15 @@ html, body {
   gap: 8px;
 }
 .title-inner.logo h1 {
-  color: yellow;   /* yellow “BOOZE NEWZ” */
+  color: yellow;
   font-size: 2.8em;
-  margin: 0;
 }
 .beer-icon {
-  width: 48px;     /* sane pixel size */
+  width: 48px;
   image-rendering: pixelated;
 }
 
-/* 5. Filter buttons */
+/* 4. Filter buttons */
 .filter-buttons {
   margin-top: 12px;
   text-align: center;
@@ -63,14 +58,13 @@ html, body {
   font-size: 1.1em;
   padding: 6px 12px;
   margin: 0 4px;
-  cursor: pointer;
 }
 .filter-buttons button.active {
   background: red;
   color: white;
 }
 
-/* 6. Table container—center, allow just-in-case scroll */
+/* 5. Table container—center and optional scroll */
 .table-container {
   width: 100vw;
   overflow-x: auto;
@@ -80,7 +74,7 @@ html, body {
   justify-content: center;
 }
 
-/* 7. Table itself */
+/* 6. Table itself */
 table {
   width: 100%;
   max-width: 960px;
@@ -89,7 +83,7 @@ table {
   table-layout: auto;
 }
 
-/* 8. Headers & cells */
+/* 7. Headers & cells */
 th, td {
   border: 2px solid red;
   font-size: 1.1em;
@@ -98,7 +92,7 @@ th {
   padding: 8px;
   background-color: darkred;
   color: white;
-  white-space: nowrap;   /* keep “Price” & “Saving” headers on one line */
+  white-space: nowrap; /* keep headers on one line */
 }
 td {
   padding: 8px;
@@ -108,52 +102,25 @@ td {
   background-color: black;
 }
 
-/* 9. Column–specific colours & spacing */
-
-/* Product link (clickable name) */
-.product-link a {
-  color: #00ccff;
-  text-decoration: underline;
-}
-
-/* Price column: blue, no wrap, tighter padding */
+/* 8. Column colors & nowrap for price */
+.product-link a { color: #00ccff; text-decoration: underline; }
 td.price {
   color: #00ccff;
   white-space: nowrap;
   padding: 4px 6px;
 }
+td.promotion { color: white; }
+td.saving    { color: yellow; font-weight: bold; }
 
-/* Promotion column */
-td.promotion {
-  color: white;
-}
-
-/* Savings column */
-td.saving {
-  color: yellow;
-  font-weight: bold;
-}
-
-/* 10. Ensure the Price header also won’t wrap */
+/* 9. Prevent header wrap for Price */
 #deals-table th:nth-child(2) {
   white-space: nowrap;
 }
 
-/* 11. Mobile refinements */
+/* 10. Mobile tweaks */
 @media (max-width: 600px) {
-  .teletext-header {
-    font-size: 1.2em;
-    padding: 4px 8px;
-  }
-  .title-inner.logo h1 {
-    font-size: 2.4em;
-  }
-  .filter-buttons button {
-    font-size: 1em;
-    padding: 5px 10px;
-  }
-  th, td {
-    font-size: 1em;
-    /* on mobile, keep the tight padding in Price col */
-  }
+  .teletext-header { font-size: 1.2em; padding: 4px 8px; }
+  .title-inner.logo h1 { font-size: 2.4em; }
+  .filter-buttons button { font-size: 1em; padding: 5px 10px; }
+  th, td { font-size: 1em; padding: 6px; }
 }
