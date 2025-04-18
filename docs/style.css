@@ -1,103 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 body {
-  background-color: black;
   font-family: 'VT323', monospace;
+  background-color: black;
   color: white;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
-.teletext-header {
+.ceefax-header {
   background-color: blue;
   color: yellow;
   padding: 5px 10px;
-  display: flex;
-  justify-content: space-between;
   font-size: 1.5em;
-  border-bottom: 3px solid red;
-}
-
-.ceefax-block {
-  font-weight: bold;
-}
-
-.title-section {
+  border-bottom: 4px solid red;
   text-align: center;
-  margin: 20px 0;
-}
-
-.title-inner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo h1 {
-  color: yellow;
-}
-
-.beer-icon {
-  width: 48px;
-  height: auto;
-  image-rendering: pixelated;
 }
 
 h1 {
+  text-align: center;
+  color: yellow;
   font-size: 3em;
-  margin: 0;
+  margin: 0.3em 0;
 }
 
-.filter-buttons {
-  margin-top: 10px;
+img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100px;
 }
 
-.filter-buttons button {
-  background: black;
+button {
+  font-family: 'VT323', monospace;
+  font-size: 1.5em;
+  background-color: black;
   color: cyan;
   border: 2px solid red;
-  font-family: 'VT323', monospace;
-  font-size: 1.2em;
-  margin: 0 5px;
-  padding: 5px 10px;
+  padding: 5px 15px;
+  margin: 10px 5px;
   cursor: pointer;
 }
 
-.filter-buttons button.active {
-  background: red;
+button.active {
+  background-color: red;
   color: white;
 }
 
 .table-container {
-  margin: 0 auto;
-  max-width: 100%;
+  width: 100vw;
   overflow-x: auto;
+  padding: 0 5px;
+  box-sizing: border-box;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
   table-layout: auto;
 }
 
 th, td {
   border: 2px solid red;
-  padding: 10px;
+  padding: 8px;
   text-align: left;
-  white-space: normal;
+  font-size: 1.1em;
+  word-break: break-word;
 }
 
 th {
-  background: darkred;
+  background-color: darkred;
   color: white;
-  font-size: 1.2em;
+  font-size: 1.5em;
 }
 
-.product-link a {
-  color: #00bfff;
+a {
+  color: #00ccff;
   text-decoration: underline;
 }
 
-td.price {
-  color: #00bfff;
+.price {
+  color: #00ccff;
+}
+
+.promotion {
+  color: white;
+}
+
+.saving {
+  color: yellow;
 }
