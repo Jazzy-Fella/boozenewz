@@ -15,86 +15,89 @@ def scrape_asda_deals():
         ]
     }
 
-    items = []
-
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=False, slow_mo=50)
-            context = browser.new_context()
-            page = context.new_page()
+            browser = p.chromium.launch(headless=False)
+            page = browser.new_page()
 
+            items = []
             for category, url_list in urls.items():
                 for url in url_list:
                     print(f"🧭 Navigating to: {url}")
                     page.goto(url, timeout=90000)
                     page.wait_for_timeout(3000)
 
-                    # Accept cookies
+                    # Accept cookies if banner appears
                     try:
                         print("🍪 Checking for cookie banner...")
-                        cookie_button = page.locator('[data-testid="privacy-banner-accept"]')
-                        if cookie_button.is_visible():
-                            cookie_button.click()
+                        btn = page.locator('[data-testid="privacy-banner-accept"]')
+                        if btn.is_visible():
+                            btn.click()
                             print("✅ Cookie banner accepted")
                             page.wait_for_timeout(1000)
-                    except Exception:
+                    except:
                         print("⚠️ No cookie banner or accept failed")
 
                     cards = page.locator("li.co-item")
-                    count = cards.count()
-                    print(f"🧩 Found {count} product cards. Processing...")
+                    total = cards.count()
+                    print(f"🧩 Found {total} product cards. Processing...")
 
-                    for i in range(count):
+                    for i in range(total):
                         try:
                             card = cards.nth(i)
-                            title = card.locator("h3.co-product__title a").inner_text(timeout=2000).strip()
-                            link = "https://groceries.asda.com" + card.locator("h3.co-product__title a").get_attribute("href")
 
-                            now_price_el = card.locator("strong.co-product__price")
-                            price = now_price_el.inner_text().replace("now", "").replace("\n", "").strip()
+                            # Title & link
+                            title_el = card.locator("h3.co-product__title a")
+                            title = title_el.inner_text(timeout=2000).strip()
+                            href  = title_el.get_attribute("href")
+                            link  = "https://groceries.asda.com" + href
+
+                            # Price
+                            now_el = card.locator("strong.co-product__price")
+                            price = now_el.inner_text().replace("now", "").replace("\n", "").strip()
                             price = price if "£" in price else f"£{price}"
 
-                            promo_text = "—"
+                            # Promotion
+                            promo = None
                             try:
                                 promo_el = card.locator("div.link-save-banner-large__meat-sticker")
                                 if promo_el.is_visible():
-                                    spans = promo_el.locator("span.link-save-banner-large__config")
-                                    promo_parts = [sp.inner_text().strip() for sp in spans.all()]
-                                    promo_text = " ".join(promo_parts)
-                            except Exception:
+                                    promo = promo_el.inner_text().strip()
+                            except:
                                 pass
-
+                            # “Was” override
                             try:
                                 was_el = card.locator("span.co-product__was-price")
                                 if was_el.is_visible():
-                                    promo_text = was_el.inner_text().strip()
-                            except Exception:
+                                    promo = was_el.inner_text().strip()
+                            except:
                                 pass
 
-                            # 🧮 Extract saving from promo
-                            saving = None
+                            # Saving → always a float
+                            saving_val = None
                             try:
-                                old_price_match = re.search(r'£\d+\.\d+', promo_text)
-                                if old_price_match:
-                                    old_price_val = float(old_price_match.group().replace("£", ""))
-                                    now_price_val = float(price.replace("£", ""))
-                                    if old_price_val > now_price_val:
-                                        saving = round(old_price_val - now_price_val, 2)
-                            except Exception:
+                                save_el = card.locator("span.co-product__saving")
+                                if save_el.is_visible():
+                                    raw = save_el.inner_text().strip()
+                                    # extract first number
+                                    m = re.search(r'([\d\.,]+)', raw)
+                                    if m:
+                                        # remove commas, parse
+                                        saving_val = float(m.group(1).replace(",",""))
+                            except:
                                 pass
 
                             items.append({
-                                "store": "Asda",
-                                "title": title or "—",
-                                "price": price or "—",
-                                "promotion": promo_text or "—",
-                                "saving": saving,
-                                "link": link or None
+                                "store":      "Asda",
+                                "category":   category,
+                                "title":      title or "",
+                                "price":      price or "",
+                                "promotion":  promo  or "",
+                                "saving":     saving_val,
+                                "link":       link
                             })
-
                         except Exception as e:
-                            print(f"⚠️ Error processing item {i}: {e}")
-                            continue
+                            print(f"⚠️ Failed item {i}: {e}")
 
             print(f"✅ Scraped {len(items)} ASDA deals total")
             browser.close()
@@ -103,3 +106,4 @@ def scrape_asda_deals():
     except Exception as e:
         print(f"💥 Scrape error: {e}")
         return []
+

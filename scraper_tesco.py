@@ -39,6 +39,7 @@ def scrape_tesco_deals():
 
                     items.append({
                         "store": "Tesco",
+                        "category": category,
                         "title": name,
                         "price": old_price,
                         "promotion": deal_price,
