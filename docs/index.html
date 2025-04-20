@@ -108,76 +108,80 @@
     });
   </script>
 
-  <!-- Data‐injection + ASDA “was X” swap logic with dynamic saving -->
+  <!-- Data‐injection + ASDA “was X” swap logic with dynamic saving & sort -->
   <script>
     fetch('deals.json')
       .then(r => r.json())
       .then(data => {
-        const tbody = document.getElementById('deals-body');
-        data.forEach(deal => {
-          const tr = document.createElement('tr');
-
-          // Product Link
-          const productTd = document.createElement('td');
-          productTd.classList.add('product-link');
-          const a = document.createElement('a');
-          a.href = deal.link;
-          a.textContent = deal.title;
-          a.target = '_blank';
-          productTd.appendChild(a);
-          tr.appendChild(productTd);
-
-          // ASDA "was X" swap
+        // 1. Compute adjusted price, promo and saving for each deal
+        const processed = data.map(deal => {
           let priceText = deal.price;
           let promoText = deal.promotion || '';
-          if (
-            deal.store.toLowerCase() === 'asda' &&
-            promoText.trim().toLowerCase().startsWith('was')
-          ) {
+          // ASDA “was X” swap
+          if (deal.store.toLowerCase() === 'asda'
+              && promoText.trim().toLowerCase().startsWith('was')) {
             const original = promoText.replace(/^was\s*/i, '').trim();
-            priceText = original;
             promoText = deal.price;
+            priceText = original;
           }
-
-          // Price cell
-          const priceTd = document.createElement('td');
-          priceTd.classList.add('price');
-          priceTd.textContent = priceText;
-          tr.appendChild(priceTd);
-
-          // Promo Price cell
-          const promoTd = document.createElement('td');
-          promoTd.classList.add('promotion');
-          promoTd.textContent = promoText;
-          tr.appendChild(promoTd);
-
-          // Calculate actual saving
+          // Compute actual savingValue
           let savingValue = deal.saving;
-          if (
-            deal.store.toLowerCase() === 'asda' &&
-            (deal.promotion || '').trim().toLowerCase().startsWith('was')
-          ) {
+          if (deal.store.toLowerCase() === 'asda'
+              && (deal.promotion || '').trim().toLowerCase().startsWith('was')) {
             const orig = parseFloat(priceText.replace(/[^0-9.]/g, ''));
             const now  = parseFloat(deal.price.replace(/[^0-9.]/g, ''));
             savingValue = orig - now;
           }
+          return { ...deal, priceText, promoText, savingValue };
+        });
 
-          // Saving cell
-          const savingTd = document.createElement('td');
-          savingTd.classList.add('saving');
-          savingTd.textContent =
-            (savingValue != null && !isNaN(savingValue))
-              ? `£${savingValue.toFixed(2)}`
+        // 2. Sort by savingValue descending
+        processed.sort((a, b) => b.savingValue - a.savingValue);
+
+        // 3. Render rows
+        const tbody = document.getElementById('deals-body');
+        processed.forEach(deal => {
+          const tr = document.createElement('tr');
+
+          // Product Link
+          const tdLink = document.createElement('td');
+          tdLink.classList.add('product-link');
+          const a = document.createElement('a');
+          a.href = deal.link;
+          a.textContent = deal.title;
+          a.target = '_blank';
+          tdLink.appendChild(a);
+          tr.appendChild(tdLink);
+
+          // Price
+          const tdPrice = document.createElement('td');
+          tdPrice.classList.add('price');
+          tdPrice.textContent = deal.priceText;
+          tr.appendChild(tdPrice);
+
+          // Promo Price
+          const tdPromo = document.createElement('td');
+          tdPromo.classList.add('promotion');
+          tdPromo.textContent = deal.promoText;
+          tr.appendChild(tdPromo);
+
+          // Saving
+          const tdSave = document.createElement('td');
+          tdSave.classList.add('saving');
+          tdSave.textContent =
+            (!isNaN(deal.savingValue))
+              ? `£${deal.savingValue.toFixed(2)}`
               : '';
-          tr.appendChild(savingTd);
+          tr.appendChild(tdSave);
 
-          // Data‑attributes for filtering
+          // Data‐attributes for filtering
           tr.dataset.store    = deal.store.toLowerCase();
           tr.dataset.category = (deal.category || '').toLowerCase();
 
           tbody.appendChild(tr);
         });
 
+        // 4. Apply the default filters
         applyFilters();
       })
       .catch(console.error);
