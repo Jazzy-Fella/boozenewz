@@ -1,4 +1,89 @@
-<tbody id="deals-body">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Booze Newz</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- 🔷 CEEFAX‐style header bar with live time -->
+  <div class="teletext-header">
+    <span class="page">P100</span>
+    <span class="ceefax-block">CEEFAX 1 100</span>
+    <span class="datetime" id="datetime">--:--:--</span>
+  </div>
+
+  <!-- 🍺 Title + Beer‐man + Filters -->
+  <div class="title-section">
+    <div class="title-inner logo">
+      <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
+      <h1>BOOZE NEWZ</h1>
+    </div>
+    <div class="filter-buttons">
+      <button class="active" id="filter-all">All</button>
+      <button id="filter-tesco">Tesco</button>
+      <button id="filter-morrisons">Morrisons</button>
+      <button id="filter-asda">Asda</button>
+    </div>
+  </div>
+
+  <!-- 📋 Deals table -->
+  <div class="table-container">
+    <table id="deals-table">
+      <thead>
+        <tr>
+          <th>Product Link</th>
+          <th>Price</th>
+          <th>Promo Price</th>
+          <th>Saving</th>
+        </tr>
+      </thead>
+      <tbody id="deals-body">
+        <!-- Rows will be injected here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ⏱ Live datetime script -->
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const d = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][now.getDay()];
+      const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()];
+      const two = n => String(n).padStart(2,'0');
+      const ts = `${d} ${two(now.getDate())} ${m} ${two(now.getHours())}:${two(now.getMinutes())}:${two(now.getSeconds())}`;
+      document.getElementById('datetime').textContent = ts;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+
+  <!-- 🧠 Filtering script -->
+  <script>
+    const btns = {
+      all:       document.getElementById('filter-all'),
+      tesco:     document.getElementById('filter-tesco'),
+      morrisons: document.getElementById('filter-morrisons'),
+      asda:      document.getElementById('filter-asda'),
+    };
+    function applyFilter(store = '') {
+      document.querySelectorAll('#deals-table tbody tr').forEach(r => {
+        r.style.display = (!store || r.dataset.store === store) ? '' : 'none';
+      });
+    }
+    Object.entries(btns).forEach(([key, btn]) => {
+      btn.addEventListener('click', () => {
+        Object.values(btns).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(key === 'all' ? '' : key);
+      });
+    });
+  </script>
+
+  <!-- 💾 Data‑injection script (moved out of the <tbody>) -->
   <script>
     fetch('deals.json')
       .then(response => response.json())
@@ -7,57 +92,57 @@
         data.forEach(deal => {
           const tr = document.createElement('tr');
 
-          // PRODUCT LINK
+          // 1. Product Link
           const productTd = document.createElement('td');
           productTd.classList.add('product-link');
-          const productLink = document.createElement('a');
-          productLink.href = deal.link;
-          productLink.textContent = deal.title;
-          productLink.target = '_blank';
-          productTd.appendChild(productLink);
+          const a = document.createElement('a');
+          a.href = deal.link;
+          a.textContent = deal.title;
+          a.target = '_blank';
+          productTd.appendChild(a);
           tr.appendChild(productTd);
 
-          // --- NEW: Determine what to show in Price vs Promo Price ---
-          // Start with the raw values
+          // 2. ASDA “was X” swap logic
           let priceText = deal.price;
           let promoText = deal.promotion || '';
-
-          // If this is an ASDA deal and promo starts with "was"
-          if (deal.store.toLowerCase() === 'asda' &&
-              promoText.trim().toLowerCase().startsWith('was')) {
-            // Strip off the "was" and any leading spaces
-            const originalPrice = promoText.trim().replace(/^was\s*/i, '');
-            // Swap them
-            priceText = originalPrice;
+          if (
+            deal.store.toLowerCase() === 'asda' &&
+            promoText.trim().toLowerCase().startsWith('was')
+          ) {
+            // Strip "was " prefix
+            const original = promoText.replace(/^was\s*/i, '').trim();
+            priceText = original;
             promoText = deal.price;
           }
 
-          // PRICE
+          // 3. Price cell
           const priceTd = document.createElement('td');
           priceTd.classList.add('price');
           priceTd.textContent = priceText;
           tr.appendChild(priceTd);
 
-          // PROMO PRICE
+          // 4. Promo Price cell
           const promoTd = document.createElement('td');
           promoTd.classList.add('promotion');
           promoTd.textContent = promoText;
-          promoTd.style.color = 'white';
           tr.appendChild(promoTd);
 
-          // SAVING
+          // 5. Saving cell
           const savingTd = document.createElement('td');
           savingTd.classList.add('saving');
           savingTd.textContent = deal.saving !== null
             ? `£${deal.saving.toFixed(2)}`
             : '';
-          savingTd.style.color = 'yellow';
           tr.appendChild(savingTd);
 
-          // For filtering
+          // 6. Tag for filtering
           tr.dataset.store = deal.store.toLowerCase();
+
           tbody.appendChild(tr);
         });
-      });
+      })
+      .catch(err => console.error('Error loading deals:', err));
   </script>
-</tbody>
+
+</body>
+</html>
