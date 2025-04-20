@@ -1,119 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Booze Newz</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
-</head>
-<body>
-
-  <div class="teletext-header">
-    <span class="page">P100</span>
-    <span class="ceefax-block">CEEFAX 1 100</span>
-    <span class="datetime" id="datetime">--:--:--</span>
-  </div>
-
-  <div class="title-section">
-    <div class="title-inner logo">
-      <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
-      <h1>BOOZE NEWZ</h1>
-    </div>
-    <div class="filter-buttons">
-      <button class="active" id="filter-all">All</button>
-      <button id="filter-tesco">Tesco</button>
-      <button id="filter-morrisons">Morrisons</button>
-      <button id="filter-asda">Asda</button>
-    </div>
-  </div>
-
-  <div class="table-container">
-    <table id="deals-table">
-      <thead>
-        <tr>
-          <th>Product Link</th>
-          <th>Price</th>
-          <th>Promo Price</th>
-          <th>Saving</th>
-        </tr>
-      </thead>
-      <tbody id="deals-body">
-        <script>
-          fetch('deals.json')
-            .then(response => response.json())
-            .then(data => {
-              const tbody = document.getElementById('deals-body');
-              data.forEach(deal => {
-                const tr = document.createElement('tr');
-
-                const productTd = document.createElement('td');
-                productTd.classList.add('product-link');
-                const productLink = document.createElement('a');
-                productLink.href = deal.link;
-                productLink.textContent = deal.title;
-                productLink.target = '_blank';
-                productTd.appendChild(productLink);
-                tr.appendChild(productTd);
-
-                const priceTd = document.createElement('td');
-                priceTd.classList.add('price');
-                priceTd.textContent = deal.price;
-                tr.appendChild(priceTd);
-
-                const promoTd = document.createElement('td');
-                promoTd.textContent = deal.promotion || '';
-                promoTd.style.color = 'white';
-                tr.appendChild(promoTd);
-
-                const savingTd = document.createElement('td');
-                savingTd.textContent = deal.saving !== null ? `£${deal.saving.toFixed(2)}` : '';
-                savingTd.style.color = 'yellow';
-                tr.appendChild(savingTd);
-
-                tr.dataset.store = deal.store.toLowerCase();
-                tbody.appendChild(tr);
-              });
-            });
-        </script>
-      </tbody>
-    </table>
-  </div>
-
+<tbody id="deals-body">
   <script>
-    function updateTime() {
-      const now = new Date();
-      const d = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][now.getDay()];
-      const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()];
-      const two = n => String(n).padStart(2,'0');
-      const ts = `${d} ${two(now.getDate())} ${m} ${two(now.getHours())}:${two(now.getMinutes())}:${two(now.getSeconds())}`;
-      document.getElementById('datetime').textContent = ts;
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
+    fetch('deals.json')
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.getElementById('deals-body');
+        data.forEach(deal => {
+          const tr = document.createElement('tr');
 
-    const btns = {
-      all:       document.getElementById('filter-all'),
-      tesco:     document.getElementById('filter-tesco'),
-      morrisons: document.getElementById('filter-morrisons'),
-      asda:      document.getElementById('filter-asda'),
-    };
+          // PRODUCT LINK
+          const productTd = document.createElement('td');
+          productTd.classList.add('product-link');
+          const productLink = document.createElement('a');
+          productLink.href = deal.link;
+          productLink.textContent = deal.title;
+          productLink.target = '_blank';
+          productTd.appendChild(productLink);
+          tr.appendChild(productTd);
 
-    function applyFilter(store = '') {
-      const rows = document.querySelectorAll('#deals-table tbody tr');
-      rows.forEach(r => {
-        r.style.display = (!store || r.dataset.store === store) ? '' : 'none';
+          // --- NEW: Determine what to show in Price vs Promo Price ---
+          // Start with the raw values
+          let priceText = deal.price;
+          let promoText = deal.promotion || '';
+
+          // If this is an ASDA deal and promo starts with "was"
+          if (deal.store.toLowerCase() === 'asda' &&
+              promoText.trim().toLowerCase().startsWith('was')) {
+            // Strip off the "was" and any leading spaces
+            const originalPrice = promoText.trim().replace(/^was\s*/i, '');
+            // Swap them
+            priceText = originalPrice;
+            promoText = deal.price;
+          }
+
+          // PRICE
+          const priceTd = document.createElement('td');
+          priceTd.classList.add('price');
+          priceTd.textContent = priceText;
+          tr.appendChild(priceTd);
+
+          // PROMO PRICE
+          const promoTd = document.createElement('td');
+          promoTd.classList.add('promotion');
+          promoTd.textContent = promoText;
+          promoTd.style.color = 'white';
+          tr.appendChild(promoTd);
+
+          // SAVING
+          const savingTd = document.createElement('td');
+          savingTd.classList.add('saving');
+          savingTd.textContent = deal.saving !== null
+            ? `£${deal.saving.toFixed(2)}`
+            : '';
+          savingTd.style.color = 'yellow';
+          tr.appendChild(savingTd);
+
+          // For filtering
+          tr.dataset.store = deal.store.toLowerCase();
+          tbody.appendChild(tr);
+        });
       });
-    }
-
-    Object.entries(btns).forEach(([key, btn]) => {
-      btn.addEventListener('click', () => {
-        Object.values(btns).forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        applyFilter(key === 'all' ? '' : key);
-      });
-    });
   </script>
-
-</body>
-</html>
+</tbody>
