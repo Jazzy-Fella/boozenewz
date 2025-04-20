@@ -50,6 +50,7 @@
       </thead>
       <tbody id="deals-body">
         <!-- rows injected by JS -->
+        <!-- sentinel will go here -->
       </tbody>
     </table>
   </div>
@@ -84,7 +85,7 @@
     let currentStore = '';
     let currentCat   = '';
     function applyFilters() {
-      document.querySelectorAll('#deals-table tbody tr').forEach(row => {
+      document.querySelectorAll('#deals-table tbody tr.row-data').forEach(row => {
         const byStore = !currentStore   || row.dataset.store === currentStore;
         const byCat   = !currentCat     || row.dataset.category === currentCat;
         row.style.display = (byStore && byCat) ? '' : 'none';
@@ -108,81 +109,88 @@
     });
   </script>
 
-  <!-- Data‐injection + ASDA “was X” swap logic with dynamic saving & sort -->
+  <!-- Lazy‐load + ASDA “was X” + dynamic saving -->
   <script>
     fetch('deals.json')
       .then(r => r.json())
       .then(data => {
-        // 1. Compute adjusted price, promo and saving for each deal
-        const processed = data.map(deal => {
-          let priceText = deal.price;
-          let promoText = deal.promotion || '';
-          // ASDA “was X” swap
-          if (deal.store.toLowerCase() === 'asda'
-              && promoText.trim().toLowerCase().startsWith('was')) {
-            const original = promoText.replace(/^was\s*/i, '').trim();
-            promoText = deal.price;
-            priceText = original;
+        const tbody    = document.getElementById('deals-body');
+        const batch    = 100;
+        let   idx      = 0;
+
+        // create sentinel row
+        const sentinel = document.createElement('tr');
+        sentinel.id = 'lazy-sentinel';
+        const td = document.createElement('td');
+        td.colSpan = 4;
+        td.style.textAlign = 'center';
+        td.style.padding = '12px';
+        td.textContent = 'Loading more…';
+        sentinel.appendChild(td);
+        tbody.appendChild(sentinel);
+
+        function loadBatch() {
+          const end = Math.min(idx + batch, data.length);
+          for (; idx < end; idx++) {
+            const deal = data[idx];
+            const tr = document.createElement('tr');
+            tr.classList.add('row-data');
+
+            // Product Link
+            const p = document.createElement('td');
+            p.classList.add('product-link');
+            const a = document.createElement('a');
+            a.href = deal.link; a.textContent = deal.title; a.target = '_blank';
+            p.appendChild(a);
+            tr.appendChild(p);
+
+            // ASDA was‑swap
+            let priceText = deal.price;
+            let promoText = deal.promotion || '';
+            if (deal.store.toLowerCase()==='asda' && promoText.trim().toLowerCase().startsWith('was')) {
+              const orig = promoText.replace(/^was\s*/i,'').trim();
+              priceText = orig; promoText = deal.price;
+            }
+
+            // Price & Promo Price
+            const priceTd = document.createElement('td');
+            priceTd.classList.add('price'); priceTd.textContent = priceText;
+            tr.appendChild(priceTd);
+            const promoTd = document.createElement('td');
+            promoTd.classList.add('promotion'); promoTd.textContent = promoText;
+            tr.appendChild(promoTd);
+
+            // dynamic saving
+            let saving = deal.saving;
+            if (deal.store.toLowerCase()==='asda' && (deal.promotion||'').trim().toLowerCase().startsWith('was')) {
+              const o = parseFloat(priceText.replace(/[^0-9.]/g,'')),
+                    n = parseFloat(deal.price.replace(/[^0-9.]/g,''));
+              saving = o - n;
+            }
+            const sTd = document.createElement('td');
+            sTd.classList.add('saving');
+            sTd.textContent = (!isNaN(saving)) ? `£${saving.toFixed(2)}` : '';
+            tr.appendChild(sTd);
+
+            // data‑attrs for filters
+            tr.dataset.store    = deal.store.toLowerCase();
+            tr.dataset.category = (deal.category||'').toLowerCase();
+
+            tbody.insertBefore(tr, sentinel);
           }
-          // Compute actual savingValue
-          let savingValue = deal.saving;
-          if (deal.store.toLowerCase() === 'asda'
-              && (deal.promotion || '').trim().toLowerCase().startsWith('was')) {
-            const orig = parseFloat(priceText.replace(/[^0-9.]/g, ''));
-            const now  = parseFloat(deal.price.replace(/[^0-9.]/g, ''));
-            savingValue = orig - now;
+          if (idx >= data.length) {
+            observer.disconnect();
+            sentinel.remove();
           }
-          return { ...deal, priceText, promoText, savingValue };
-        });
+          applyFilters();
+        }
 
-        // 2. Sort by savingValue descending
-        processed.sort((a, b) => b.savingValue - a.savingValue);
+        // intersection observer
+        const observer = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting) loadBatch();
+        }, { rootMargin: '200px' });
+        observer.observe(sentinel);
 
-        // 3. Render rows
-        const tbody = document.getElementById('deals-body');
-        processed.forEach(deal => {
-          const tr = document.createElement('tr');
-
-          // Product Link
-          const tdLink = document.createElement('td');
-          tdLink.classList.add('product-link');
-          const a = document.createElement('a');
-          a.href = deal.link;
-          a.textContent = deal.title;
-          a.target = '_blank';
-          tdLink.appendChild(a);
-          tr.appendChild(tdLink);
-
-          // Price
-          const tdPrice = document.createElement('td');
-          tdPrice.classList.add('price');
-          tdPrice.textContent = deal.priceText;
-          tr.appendChild(tdPrice);
-
-          // Promo Price
-          const tdPromo = document.createElement('td');
-          tdPromo.classList.add('promotion');
-          tdPromo.textContent = deal.promoText;
-          tr.appendChild(tdPromo);
-
-          // Saving
-          const tdSave = document.createElement('td');
-          tdSave.classList.add('saving');
-          tdSave.textContent =
-            (!isNaN(deal.savingValue))
-              ? `£${deal.savingValue.toFixed(2)}`
-              : '';
-          tr.appendChild(tdSave);
-
-          // Data‐attributes for filtering
-          tr.dataset.store    = deal.store.toLowerCase();
-          tr.dataset.category = (deal.category || '').toLowerCase();
-
-          tbody.appendChild(tr);
-        });
-
-        // 4. Apply the default filters
-        applyFilters();
       })
       .catch(console.error);
   </script>
