@@ -125,68 +125,58 @@ td.saving    { color: yellow; font-weight: bold; }
   th, td { font-size: 1em; padding: 6px; }
 }
 
-/* === CRT display effect applied site‑wide === */
+/* === Subtle CRT display effect === */
 
-/* flicker opacity to mimic unstable phosphors */
+/* gentler flicker */
 @keyframes flicker {
-  0%   { opacity: 0.27861; }
-  5%   { opacity: 0.34769; }
-  10%  { opacity: 0.23604; }
-  15%  { opacity: 0.90626; }
-  20%  { opacity: 0.18128; }
-  25%  { opacity: 0.83891; }
-  30%  { opacity: 0.65583; }
-  35%  { opacity: 0.67807; }
-  40%  { opacity: 0.26559; }
-  45%  { opacity: 0.84693; }
-  50%  { opacity: 0.96019; }
-  55%  { opacity: 0.08594; }
-  60%  { opacity: 0.20313; }
-  65%  { opacity: 0.71988; }
-  70%  { opacity: 0.53455; }
-  75%  { opacity: 0.37288; }
-  80%  { opacity: 0.71428; }
-  85%  { opacity: 0.70419; }
-  90%  { opacity: 0.70030; }
-  95%  { opacity: 0.36108; }
-  100% { opacity: 0.24387; }
+  0%, 100% { opacity: 0.75; }
+  50%      { opacity: 0.85; }
 }
 
-/* RGB‑separation + glow jitter */
+/* reduced RGB‑split + glow */
 @keyframes textShadow {
-  0%   { text-shadow: 0.44px 0 1px rgba(0,30,255,0.5), -0.44px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-  /* … keep the rest of your keyframes here … */
-  100% { text-shadow: 2.62px 0 1px rgba(0,30,255,0.5), -2.62px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
+  0%,100% {
+    text-shadow:
+      0.5px 0 1px rgba(0,30,255,0.3),
+      -0.5px 0 1px rgba(255,0,80,0.2),
+      0 0 2px rgba(255,255,255,0.1);
+  }
+  50% {
+    text-shadow:
+      1px 0 1px rgba(0,30,255,0.3),
+      -1px 0 1px rgba(255,0,80,0.2),
+      0 0 2px rgba(255,255,255,0.1);
+  }
 }
 
-/* apply CRT effect to the whole page */
-body {
+/* base class: subtle glow + separation, slower animation */
+.crt {
   position: relative;
-  animation: textShadow 1.6s infinite;
+  animation: textShadow 3s infinite;
 }
 
-/* scan‑line overlay */
-body::before {
+/* faint scan‑lines + very light RGB bleed */
+.crt::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top:0; left:0; right:0; bottom:0;
   background:
-    linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
-    linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
-  background-size: 100% 2px, 3px 100%;
+    linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%),
+    linear-gradient(90deg, rgba(255,0,0,0.04), rgba(0,255,0,0.01), rgba(0,0,255,0.04));
+  background-size: 100% 2px, 4px 100%;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 2;
 }
 
-/* random flicker patch */
-body::after {
+/* very light overall flicker overlay */
+.crt::after {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(18,16,16,0.1);
-  opacity: 0;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(18,16,16,0.05);
+  opacity: 1;
   pointer-events: none;
-  z-index: 9999;
-  animation: flicker 0.15s infinite;
+  z-index: 2;
+  animation: flicker 0.3s infinite;
 }
 
