@@ -56,7 +56,7 @@
     </table>
   </div>
 
-  <!-- Live datetime updater -->
+  <!-- Live datetime updater (no backticks) -->
   <script>
     function updateTime() {
       const now = new Date();
@@ -64,7 +64,12 @@
       const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()];
       const two = n => String(n).padStart(2,'0');
       document.getElementById('datetime').textContent =
-        \`\${d} \${two(now.getDate())} \${m} \${two(now.getHours())}:\${two(now.getMinutes())}:\${two(now.getSeconds())}\`;
+        d + ' ' +
+        two(now.getDate()) + ' ' +
+        m + ' ' +
+        two(now.getHours()) + ':' +
+        two(now.getMinutes()) + ':' +
+        two(now.getSeconds());
     }
     setInterval(updateTime, 1000);
     updateTime();
@@ -81,9 +86,9 @@
     };
     // Category buttons
     const catBtns = {
-      all:    document.getElementById('filter-cat-all'),
-      beer:   document.getElementById('filter-cat-beer'),
-      spirits:document.getElementById('filter-cat-spirits'),
+      all:     document.getElementById('filter-cat-all'),
+      beer:    document.getElementById('filter-cat-beer'),
+      spirits: document.getElementById('filter-cat-spirits'),
     };
 
     let currentStore = '';
@@ -118,7 +123,7 @@
     });
   </script>
 
-  <!-- Data‐injection + ASDA “was X” swap logic -->
+  <!-- Data‐injection + ASDA “was X” swap + category guard -->
   <script>
     fetch('deals.json')
       .then(r => r.json())
@@ -127,58 +132,60 @@
         data.forEach(deal => {
           const tr = document.createElement('tr');
 
-          // Product Link
+          // 1. Product Link
           const productTd = document.createElement('td');
           productTd.classList.add('product-link');
           const a = document.createElement('a');
-          a.href = deal.link;
+          a.href        = deal.link;
           a.textContent = deal.title;
-          a.target = '_blank';
+          a.target      = '_blank';
           productTd.appendChild(a);
           tr.appendChild(productTd);
 
-          // ASDA "was X" swap
+          // 2. ASDA “was X” swap logic
           let priceText = deal.price;
           let promoText = deal.promotion || '';
           if (
             deal.store.toLowerCase() === 'asda' &&
             promoText.trim().toLowerCase().startsWith('was')
           ) {
-            const original = promoText.replace(/^was\s*/i,'').trim();
+            const original = promoText.replace(/^was\s*/i, '').trim();
             priceText = original;
             promoText = deal.price;
           }
 
-          // Price cell
+          // 3. Price cell
           const priceTd = document.createElement('td');
           priceTd.classList.add('price');
           priceTd.textContent = priceText;
           tr.appendChild(priceTd);
 
-          // Promo Price cell
+          // 4. Promo Price cell
           const promoTd = document.createElement('td');
           promoTd.classList.add('promotion');
           promoTd.textContent = promoText;
           tr.appendChild(promoTd);
 
-          // Saving cell
+          // 5. Saving cell
           const savingTd = document.createElement('td');
           savingTd.classList.add('saving');
-          savingTd.textContent = deal.saving != null 
-            ? `£${deal.saving.toFixed(2)}` : '';
+          savingTd.textContent =
+            deal.saving != null ? `£${deal.saving.toFixed(2)}` : '';
           tr.appendChild(savingTd);
 
-          // Attach data-attributes for filtering
+          // 6. Data‑attributes for filtering
           tr.dataset.store    = deal.store.toLowerCase();
-          tr.dataset.category = deal.category.toLowerCase();
+          tr.dataset.category = deal.category
+            ? deal.category.toLowerCase()
+            : '';
 
           tbody.appendChild(tr);
         });
 
-        // After injecting, apply initial filters (defaults to "All")
+        // Apply “All/All” by default
         applyFilters();
       })
-      .catch(console.error);
+      .catch(err => console.error('Error loading deals:', err));
   </script>
 
 </body>
