@@ -191,40 +191,9 @@ td.saving    { color: yellow; font-weight: bold; }
   background: black;
   color: cyan;
   border: 2px solid red;
-  font-size: 1.4em;       /* Bigger text */
+  font-size: 1.2em;       /* Bigger text */
   padding: 10px 16px;     /* Thicker box */
   width: 85%;
   max-width: 480px;
   font-family: 'VT323', monospace;
-}
-
-.faq-button-wrapper {
-  margin-top: 6px;
-  margin-bottom: 0;
-  text-align: center;
-}
-
-.table-container {
-  margin-top: 0; /* Ensure no extra spacing above the table */
-
-}
-.filter-btn {
-  background: black;
-  color: cyan;
-  border: 2px solid red;
-  font-size: 1em;
-  padding: 4px 10px;
-  font-family: 'VT323', monospace;
-  cursor: pointer;
-}
-
-.faq-btn {
-  display: none; /* legacy class — safe to remove */
-}
-.faq-content h2 {
-  margin-top: 0;
-  text-align: center;
-}
-.faq-content p {
-  margin-bottom: 20px;
 }
