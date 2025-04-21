@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Booze Newz</title>
 
-  <!-- Browser UI theme color -->
   <meta name="theme-color" content="#000000" />
 
   <!-- Favicons -->
@@ -15,14 +14,12 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
-  <!-- Styles and fonts -->
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
 </head>
-
 <body class="crt">
 
-  <!-- CEEFAX‐style header with live time -->
+  <!-- CEEFAX-style header with live time -->
   <div class="teletext-header">
     <span class="page">P100</span>
     <span class="ceefax-block">CEEFAX 1 420</span>
@@ -35,6 +32,7 @@
       <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
       <h1>BOOZE NEWZ</h1>
     </div>
+
     <!-- Supermarket filters -->
     <div class="filter-buttons">
       <button class="active" id="filter-all">All</button>
@@ -42,11 +40,17 @@
       <button id="filter-morrisons">Morrisons</button>
       <button id="filter-asda">Asda</button>
     </div>
+
     <!-- Category filters -->
     <div class="filter-buttons">
       <button class="active" id="filter-cat-all">All</button>
       <button id="filter-cat-beer">Beer</button>
       <button id="filter-cat-spirits">Spirits</button>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search for a product..." />
     </div>
   </div>
 
@@ -97,10 +101,12 @@
     let currentStore = '';
     let currentCat   = '';
     function applyFilters() {
+      const searchQuery = document.getElementById('search-input').value.toLowerCase();
       document.querySelectorAll('#deals-table tbody tr').forEach(row => {
-        const byStore = !currentStore   || row.dataset.store === currentStore;
-        const byCat   = !currentCat     || row.dataset.category === currentCat;
-        row.style.display = (byStore && byCat) ? '' : 'none';
+        const byStore = !currentStore || row.dataset.store === currentStore;
+        const byCat = !currentCat || row.dataset.category === currentCat;
+        const bySearch = row.innerText.toLowerCase().includes(searchQuery);
+        row.style.display = (byStore && byCat && bySearch) ? '' : 'none';
       });
     }
     Object.entries(storeBtns).forEach(([key, btn]) => {
@@ -119,28 +125,25 @@
         applyFilters();
       });
     });
+
+    document.getElementById('search-input').addEventListener('input', applyFilters);
   </script>
 
-  <!-- Data‐injection + ASDA “was X” swap logic with dynamic saving & sort -->
+  <!-- Data-injection -->
   <script>
     fetch('deals.json')
       .then(r => r.json())
       .then(data => {
-        // 1. Compute adjusted price, promo and saving for each deal
         const processed = data.map(deal => {
           let priceText = deal.price;
           let promoText = deal.promotion || '';
-          // ASDA “was X” swap
-          if (deal.store.toLowerCase() === 'asda'
-              && promoText.trim().toLowerCase().startsWith('was')) {
+          if (deal.store.toLowerCase() === 'asda' && promoText.trim().toLowerCase().startsWith('was')) {
             const original = promoText.replace(/^was\s*/i, '').trim();
             promoText = deal.price;
             priceText = original;
           }
-          // Compute actual savingValue
           let savingValue = deal.saving;
-          if (deal.store.toLowerCase() === 'asda'
-              && (deal.promotion || '').trim().toLowerCase().startsWith('was')) {
+          if (deal.store.toLowerCase() === 'asda' && (deal.promotion || '').trim().toLowerCase().startsWith('was')) {
             const orig = parseFloat(priceText.replace(/[^0-9.]/g, ''));
             const now  = parseFloat(deal.price.replace(/[^0-9.]/g, ''));
             savingValue = orig - now;
@@ -148,15 +151,11 @@
           return { ...deal, priceText, promoText, savingValue };
         });
 
-        // 2. Sort by savingValue descending
         processed.sort((a, b) => b.savingValue - a.savingValue);
 
-        // 3. Render rows
         const tbody = document.getElementById('deals-body');
         processed.forEach(deal => {
           const tr = document.createElement('tr');
-
-          // Product Link
           const tdLink = document.createElement('td');
           tdLink.classList.add('product-link');
           const a = document.createElement('a');
@@ -166,19 +165,16 @@
           tdLink.appendChild(a);
           tr.appendChild(tdLink);
 
-          // Price
           const tdPrice = document.createElement('td');
           tdPrice.classList.add('price');
           tdPrice.textContent = deal.priceText;
           tr.appendChild(tdPrice);
 
-          // Promo Price
           const tdPromo = document.createElement('td');
           tdPromo.classList.add('promotion');
           tdPromo.textContent = deal.promoText;
           tr.appendChild(tdPromo);
 
-          // Saving
           const tdSave = document.createElement('td');
           tdSave.classList.add('saving');
           tdSave.textContent =
@@ -187,14 +183,11 @@
               : '';
           tr.appendChild(tdSave);
 
-          // Data‐attributes for filtering
           tr.dataset.store    = deal.store.toLowerCase();
           tr.dataset.category = (deal.category || '').toLowerCase();
-
           tbody.appendChild(tr);
         });
 
-        // 4. Apply the default filters
         applyFilters();
       })
       .catch(console.error);
@@ -210,7 +203,6 @@
       });
     }
   </script>
-
 
 </body>
 </html>
