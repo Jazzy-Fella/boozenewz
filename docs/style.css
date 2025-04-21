@@ -199,8 +199,14 @@ td.saving    { color: yellow; font-weight: bold; }
 }
 
 .faq-button-wrapper {
-  margin-top: 8px;
+  margin-top: 6px;
+  margin-bottom: 0;
   text-align: center;
+}
+
+.table-container {
+  margin-top: 0; /* Ensure no extra spacing above the table */
+
 }
 .filter-btn {
   background: black;

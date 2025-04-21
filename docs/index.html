@@ -200,11 +200,18 @@
   </script>
 
  <script>
-  document.getElementById('faq-button').addEventListener('click', () => {
-    document.getElementById('faq-modal').style.display = 'flex';
-  });
-  document.getElementById('faq-close').addEventListener('click', () => {
-    document.getElementById('faq-modal').style.display = 'none';
+  document.addEventListener('DOMContentLoaded', () => {
+    const faqBtn = document.getElementById('faq-button');
+    const faqModal = document.getElementById('faq-modal');
+    const faqClose = document.getElementById('faq-close');
+
+    faqBtn?.addEventListener('click', () => {
+      faqModal.style.display = 'flex';
+    });
+
+    faqClose?.addEventListener('click', () => {
+      faqModal.style.display = 'none';
+    });
   });
 </script>
 
