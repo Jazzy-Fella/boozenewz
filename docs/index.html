@@ -3,37 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Booze Newz</title>
+  <title>Booze Newz</title>
 
   <meta name="theme-color" content="#000000" />
-
-  <!-- Favicons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
 </head>
 <body class="crt">
 
-  <!-- CEEFAX-style header with live time -->
   <div class="teletext-header">
     <span class="page">P100</span>
     <span class="ceefax-block">CEEFAX 1 420</span>
     <span class="datetime" id="datetime">--:--:--</span>
   </div>
 
-  <!-- Title, Beer Guy, and Filters -->
   <div class="title-section">
     <div class="title-inner logo">
       <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
       <h1>BOOZE NEWZ</h1>
+      <button id="faq-button" class="faq-btn">?</button>
     </div>
 
-    <!-- Supermarket filters -->
     <div class="filter-buttons">
       <button class="active" id="filter-all">All</button>
       <button id="filter-tesco">Tesco</button>
@@ -41,20 +36,17 @@
       <button id="filter-asda">Asda</button>
     </div>
 
-    <!-- Category filters -->
     <div class="filter-buttons">
       <button class="active" id="filter-cat-all">All</button>
       <button id="filter-cat-beer">Beer</button>
       <button id="filter-cat-spirits">Spirits</button>
     </div>
 
-    <!-- Search bar -->
     <div class="search-bar">
       <input type="text" id="search-input" placeholder="Search for a product..." />
     </div>
   </div>
 
-  <!-- Deals table -->
   <div class="table-container">
     <table id="deals-table">
       <thead>
@@ -65,13 +57,22 @@
           <th>Saving</th>
         </tr>
       </thead>
-      <tbody id="deals-body">
-        <!-- rows injected by JS -->
-      </tbody>
+      <tbody id="deals-body"></tbody>
     </table>
   </div>
 
-  <!-- Live datetime updater -->
+  <!-- FAQ Modal -->
+  <div class="faq-modal" id="faq-modal">
+    <div class="faq-content">
+      <button id="faq-close" class="faq-close">X</button>
+      <h2>FAQ</h2>
+      <p><strong>Q:</strong> Is there an App for this?<br>
+      <strong>A:</strong> I’m glad you asked! For iPhone just click the share button then ‘Add to Home Screen’ and for Android click the three dots and do the same.</p>
+      <p><strong>Q:</strong> Are you adding Sainsbury’s or Co-Op?<br>
+      <strong>A:</strong> No. They are terrible for deals.</p>
+    </div>
+  </div>
+
   <script>
     function updateTime() {
       const now = new Date();
@@ -85,7 +86,6 @@
     updateTime();
   </script>
 
-  <!-- Filtering logic -->
   <script>
     const storeBtns = {
       all:       document.getElementById('filter-all'),
@@ -129,7 +129,6 @@
     document.getElementById('search-input').addEventListener('input', applyFilters);
   </script>
 
-  <!-- Data-injection -->
   <script>
     fetch('deals.json')
       .then(r => r.json())
@@ -193,7 +192,17 @@
       .catch(console.error);
   </script>
 
-  <!-- Register service worker for PWA -->
+  <!-- FAQ toggle logic -->
+  <script>
+    document.getElementById('faq-button').addEventListener('click', () => {
+      document.getElementById('faq-modal').style.display = 'flex';
+    });
+    document.getElementById('faq-close').addEventListener('click', () => {
+      document.getElementById('faq-modal').style.display = 'none';
+    });
+  </script>
+
+  <!-- Service worker registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
