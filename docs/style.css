@@ -199,18 +199,19 @@ td.saving    { color: yellow; font-weight: bold; }
 }
 
 .faq-button-wrapper {
-  margin-top: 10px;
+  margin-top: 8px;
   text-align: center;
 }
 .filter-btn {
   background: black;
   color: cyan;
   border: 2px solid red;
-  font-size: 1.1em;
-  padding: 6px 12px;
+  font-size: 1em;
+  padding: 4px 10px;
   font-family: 'VT323', monospace;
   cursor: pointer;
 }
+
 .faq-btn {
   display: none; /* legacy class — safe to remove */
 }
