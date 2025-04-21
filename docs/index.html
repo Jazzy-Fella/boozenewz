@@ -26,7 +26,6 @@
     <div class="title-inner logo">
       <img src="img/beer-man.png" alt="Beer Guy" class="beer-icon" />
       <h1>BOOZE NEWZ</h1>
-      <button id="faq-button" class="faq-btn">?</button>
     </div>
 
     <div class="filter-buttons">
@@ -44,6 +43,10 @@
 
     <div class="search-bar">
       <input type="text" id="search-input" placeholder="Search for a product..." />
+    </div>
+
+    <div class="faq-button-wrapper">
+      <button id="faq-button" class="filter-btn">FAQ</button>
     </div>
   </div>
 
@@ -65,11 +68,15 @@
   <div class="faq-modal" id="faq-modal">
     <div class="faq-content">
       <button id="faq-close" class="faq-close">X</button>
-      <h2>FAQ</h2>
-      <p><strong>Q:</strong> Is there an App for this?<br>
-      <strong>A:</strong> I’m glad you asked! For iPhone just click the share button then ‘Add to Home Screen’ and for Android click the three dots and do the same.</p>
-      <p><strong>Q:</strong> Are you adding Sainsbury’s or Co-Op?<br>
-      <strong>A:</strong> No. They are terrible for deals.</p>
+      <h2 style="text-align: center;">FAQ</h2>
+      <p style="margin-bottom: 20px;">
+        <strong>Q:</strong> Is there an App for this?<br>
+        <strong>A:</strong> I’m glad you asked! For iPhone just click the share button then ‘Add to Home Screen’ and for Android click the three dots and do the same.
+      </p>
+      <p>
+        <strong>Q:</strong> Are you adding Sainsbury’s or Co-Op?<br>
+        <strong>A:</strong> No. They are terrible for deals.
+      </p>
     </div>
   </div>
 
@@ -192,7 +199,6 @@
       .catch(console.error);
   </script>
 
-  <!-- FAQ toggle logic -->
   <script>
     document.getElementById('faq-button').addEventListener('click', () => {
       document.getElementById('faq-modal').style.display = 'flex';
@@ -202,7 +208,6 @@
     });
   </script>
 
-  <!-- Service worker registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

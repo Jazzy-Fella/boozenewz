@@ -198,48 +198,26 @@ td.saving    { color: yellow; font-weight: bold; }
   font-family: 'VT323', monospace;
 }
 
-/* FAQ Modal Styles */
-.faq-btn {
-  font-family: 'VT323', monospace;
-  font-size: 1.5em;
+.faq-button-wrapper {
+  margin-top: 10px;
+  text-align: center;
+}
+.filter-btn {
   background: black;
   color: cyan;
   border: 2px solid red;
-  padding: 4px 10px;
-  margin-left: 12px;
-  cursor: pointer;
-}
-.faq-modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.85);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-.faq-content {
-  background: black;
-  color: white;
-  border: 2px solid red;
-  padding: 24px;
-  max-width: 500px;
-  width: 90%;
+  font-size: 1.1em;
+  padding: 6px 12px;
   font-family: 'VT323', monospace;
-  font-size: 1.4em;
-  position: relative;
-}
-.faq-close {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  background: black;
-  color: red;
-  border: 2px solid red;
-  font-size: 1.2em;
-  padding: 2px 8px;
   cursor: pointer;
 }
-
+.faq-btn {
+  display: none; /* legacy class — safe to remove */
+}
+.faq-content h2 {
+  margin-top: 0;
+  text-align: center;
+}
+.faq-content p {
+  margin-bottom: 20px;
+}
