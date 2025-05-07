@@ -44,33 +44,6 @@ The app calculates savings on alcohol deals and sorts them so the best bargains 
 
 ---
 
-## 🚀 How to Scrape and Update the Deals
-
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/Jazzy-Fella/boozenewz.git
-   cd boozenewz
-   ```
-
-2. Activate your Python virtual environment (if using one):
-   ```bash
-   source venv/bin/activate
-   ```
-
-3. Run the scraper locally:
-   ```bash
-   python app.py --scrape
-   ```
-
-4. Commit and push the new deals:
-   ```bash
-   git add docs/deals.json
-   git commit -m "Update deals.json with latest scraped data"
-   git push
-   ```
-
-The live site will then update automatically via GitHub Pages.
-
 ---
 
 ## 🛠️ Tech Stack
